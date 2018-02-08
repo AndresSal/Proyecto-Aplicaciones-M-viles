@@ -101,6 +101,7 @@
             android:id="@+id/btnMeetingList"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:onClick="llamarListaReservas"
             android:text="Reserva"/>
 
         <Button

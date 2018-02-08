@@ -40,4 +40,10 @@ public class MainActivity extends AppCompatActivity {
             }
         });
     }
+
+    public void llamarListaReservas(View view)
+    {
+        Intent intent = new Intent(this, MeetingListActivity.class);
+        startActivity(intent);
+    }
 }
