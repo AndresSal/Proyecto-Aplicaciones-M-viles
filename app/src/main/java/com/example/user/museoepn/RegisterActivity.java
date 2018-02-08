@@ -54,6 +54,15 @@ public class RegisterActivity extends AppCompatActivity {
                 registerUser();
             }
         });
+
+        findViewById(R.id.txtLogear).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                //open register screen
+                finish();
+                startActivity(new Intent(getApplicationContext(), LogInActivity.class));
+            }
+        });
     }
 
     private void registerUser(){
@@ -95,7 +104,7 @@ public class RegisterActivity extends AppCompatActivity {
                 try {
                     JSONObject obj = new JSONObject(response);
                     if (!obj.getBoolean("error")) {
-                        Toast.makeText(getApplicationContext(), obj.getString("mensaje_error"), Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getApplicationContext(), obj.getString("message"), Toast.LENGTH_SHORT).show();
                         JSONObject userJson = obj.getJSONObject("user");
 
                         User user = new User(
@@ -108,7 +117,7 @@ public class RegisterActivity extends AppCompatActivity {
                         finish();
                         startActivity(new Intent(getApplicationContext(), MainActivity.class));
                     } else {
-                        Toast.makeText(getApplicationContext(), obj.getString("mensaje_correcto"), Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getApplicationContext(), obj.getString("message"), Toast.LENGTH_SHORT).show();
                     }
                 } catch (JSONException ex) {
                     ex.printStackTrace();
