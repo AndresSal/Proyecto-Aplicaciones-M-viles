@@ -1,0 +1,1 @@
+cargarlos en la carpeta htdocs del XAMPP, LAMPP o MAMPP.
