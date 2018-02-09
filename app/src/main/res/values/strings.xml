@@ -1,3 +1,17 @@
 <resources>
     <string name="app_name">MuseoEPN</string>
+    <string name="hora_prompt">Escoja la hora</string>
+    <string-array name="hora_arrays">
+        <item>9:00</item>
+        <item>9:30</item>
+        <item>10:00</item>
+        <item>10:30</item>
+    </string-array>
+    <string name="motivo_prompt"></string>
+    <string-array name="motivo_arrays">
+        <item>educativo</item>
+        <item>entretenimiento</item>
+
+    </string-array>
+
 </resources>

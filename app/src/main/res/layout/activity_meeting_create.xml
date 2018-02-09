@@ -48,7 +48,71 @@
                     android:textAppearance="@style/Base.TextAppearance.AppCompat.Medium"
                     />
             </TableRow>
+            <TableRow>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:padding="10dp"
+                    android:text="Horario"
+                    android:textAppearance="@style/Base.TextAppearance.AppCompat.Medium"
+                    />
+                <Spinner     android:id="@+id/spinnerHora"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:entries="@array/hora_arrays"
+                    android:prompt="@string/hora_prompt"
+                    android:layout_marginLeft="24dp"
+                    android:layout_marginRight="24dp"
+                    android:layout_marginBottom="8dp"
+                    android:layout_marginTop="4dp"
+                     />
+            </TableRow>
+
+            <TableRow>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:padding="10dp"
+                    android:text="Motivo de Visita"
+                    android:textAppearance="@style/Base.TextAppearance.AppCompat.Medium"
+                    />
+                <Spinner     android:id="@+id/spinnerVisita"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:entries="@array/motivo_arrays"
+                    android:prompt="@string/motivo_prompt"
+                    android:layout_marginLeft="24dp"
+                    android:layout_marginRight="24dp"
+                    android:layout_marginBottom="8dp"
+                    android:layout_marginTop="4dp"
+                    />
+            </TableRow>
+
         </TableLayout>
+        <EditText
+            android:id="@+id/txtInstitucion"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"
+            android:layout_marginTop="15dp"
+            android:hint="Nombre de la Institución"
+            android:inputType="text"/>
+        <EditText
+            android:id="@+id/txtPersonas"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"
+            android:layout_marginTop="15dp"
+            android:hint="Número de Personas"
+            android:inputType="text"/>
+        <Button
+            android:id="@+id/btnCrearReserva"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="10dp"
+            android:layout_marginTop="50dp"
+            android:text="Crear Reserva"/>
+
 
 
     </LinearLayout>

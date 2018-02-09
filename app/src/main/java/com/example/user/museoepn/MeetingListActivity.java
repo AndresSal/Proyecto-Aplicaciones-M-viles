@@ -46,6 +46,7 @@ public class MeetingListActivity extends AppCompatActivity {
         adapter.add("Reserva 1");
         adapter.add("Reserva 2");
         adapter.add("Reserva 3");
+        adapter.add("Reserva 4");
         adapter.notifyDataSetChanged();
 
     }

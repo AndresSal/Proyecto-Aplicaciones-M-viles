@@ -1,5 +1,6 @@
 package com.example.user.museoepn;
 
+import android.annotation.SuppressLint;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.content.Intent;
@@ -9,10 +10,15 @@ import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.CalendarView;
 import android.widget.DatePicker;
+import android.widget.EditText;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import org.w3c.dom.Text;
 
 import java.util.Calendar;
 import java.util.Date;
@@ -22,11 +28,16 @@ public class MeetingCreateActivity extends AppCompatActivity  {
    private TextView dateMet,name;
    private static final String TAG = "MeetingCreateActivity";
    private  DatePickerDialog.OnDateSetListener DateSetListener;
+   private Spinner spinner;
+   private EditText txtinstitucion;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_meeting_create);
+        spinner = (Spinner) findViewById(R.id.spinnerVisita);
+        txtinstitucion = (EditText) findViewById(R.id.txtInstitucion);
 
         name = (TextView) findViewById(R.id.mettxtUsername);
         dateMet = (TextView) findViewById(R.id.mettxtDatePicked);
@@ -65,8 +76,24 @@ public class MeetingCreateActivity extends AppCompatActivity  {
                 dateMet.setText(date);
             }
         };
+        spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            public void onItemSelected(AdapterView<?> parent, View view, int pos, long id) {
+                Object item = parent.getItemAtPosition(pos);
+                if(item.equals("educativo")){
+                    txtinstitucion.setVisibility(View.VISIBLE);
+                }
+                else{
+                    txtinstitucion.setVisibility(View.GONE);
+                }
+            }
+            public void onNothingSelected(AdapterView<?> parent) {
+            }
+        });
+
+
     }
 
+   
 
 
 
