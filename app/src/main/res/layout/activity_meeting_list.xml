@@ -13,14 +13,22 @@
         android:orientation="vertical"
         android:padding="10dp">
 
-        <Button
+        <!--<Button
             android:id="@+id/btnSelectDate"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="8dp"
             android:layout_marginTop="8dp"
             android:onClick="setDate"
-            android:text="Seleccionar Fecha"/>
+            android:text="Seleccionar Fecha"/>-->
+        <CalendarView
+            android:id="@+id/calendarView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/linearLayout"
+            android:layout_centerVertical="true"
+            android:layout_marginTop="4dp"
+            android:layout_marginBottom="8dp"/>
 
         <ListView
             android:id="@+id/listaReservas"

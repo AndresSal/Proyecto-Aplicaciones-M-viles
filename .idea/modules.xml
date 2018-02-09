@@ -4,6 +4,7 @@
     <modules>
       <module fileurl="file://$PROJECT_DIR$/Proyecto-Aplicaciones-Moviles.iml" filepath="$PROJECT_DIR$/Proyecto-Aplicaciones-Moviles.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
+      <module fileurl="file://C:\Users\Jose\Documents\GitHub\Proyecto-Aplicaciones-Moviles\app\app.iml" filepath="C:\Users\Jose\Documents\GitHub\Proyecto-Aplicaciones-Moviles\app\app.iml" />
     </modules>
   </component>
 </project>
