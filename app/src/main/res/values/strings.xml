@@ -8,6 +8,9 @@
         <item>10:30</item>
     </string-array>
     <string name="motivo_prompt"></string>
+    <string name="inicio">inicio</string>
+    <string name="reserva">reserva</string>
+    <string name="salir">salir</string>
     <string-array name="motivo_arrays">
         <item>educativo</item>
         <item>entretenimiento</item>

@@ -1,8 +1,11 @@
 package com.example.user.museoepn;
 
 import android.content.Intent;
+import android.support.annotation.NonNull;
+import android.support.design.widget.BottomNavigationView;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.MenuItem;
 import android.widget.ArrayAdapter;
 import android.widget.CalendarView;
 import android.widget.ListView;
@@ -15,6 +18,7 @@ public class MeetingListActivity extends AppCompatActivity {
     private ListView lstView;
     private ArrayList<String> listViewItems = new ArrayList<String>();
     private ArrayAdapter<String> adapter;
+    private BottomNavigationView bottomNavigationView;
 
     CalendarView calendario;
 
@@ -23,7 +27,7 @@ public class MeetingListActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_meeting_list);
-
+        bottomNavigationView = (BottomNavigationView)findViewById(R.id.MenuNavegacion);
         calendario = (CalendarView) findViewById(R.id.calendarView);
         calendario.setOnDateChangeListener(new CalendarView.OnDateChangeListener() {
 
@@ -48,6 +52,23 @@ public class MeetingListActivity extends AppCompatActivity {
         adapter.add("Reserva 3");
         adapter.add("Reserva 4");
         adapter.notifyDataSetChanged();
-
+        bottomNavigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
+            @Override
+            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+                switch(item.getItemId()){
+                    case R.id.home_I:
+                        startActivity(new Intent(MeetingListActivity.this,MainActivity.class));
+                        break;
+                    case R.id.reserva_I:
+                        startActivity(new Intent(MeetingListActivity.this,MeetingListActivity.class));
+                        break;
+                    case R.id.salir_I:
+                        finish();
+                        SharedPrefManager.getInstance(getApplicationContext()).logout();
+                        break;
+                }
+                return false;
+            }
+        });
     }
 }
