@@ -105,7 +105,7 @@ public class RegisterActivity extends AppCompatActivity {
                     JSONObject obj = new JSONObject(response);
                     if (!obj.getBoolean("error")) {
                         Toast.makeText(getApplicationContext(), obj.getString("message"), Toast.LENGTH_SHORT).show();
-                        JSONObject userJson = obj.getJSONObject("user");
+                        JSONObject userJson = obj.getJSONObject("users");
 
                         User user = new User(
                                 userJson.getInt("id"),
