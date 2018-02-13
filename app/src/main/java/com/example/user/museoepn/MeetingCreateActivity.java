@@ -9,44 +9,67 @@ import android.graphics.drawable.ColorDrawable;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.Button;
 import android.widget.CalendarView;
 import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.android.volley.AuthFailureError;
+import com.android.volley.Request;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.StringRequest;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.w3c.dom.Text;
 
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 public class MeetingCreateActivity extends AppCompatActivity  {
 
-   private TextView dateMet,name;
-   private static final String TAG = "MeetingCreateActivity";
-   private  DatePickerDialog.OnDateSetListener DateSetListener;
-   private Spinner spinner;
-   private EditText txtinstitucion;
+    private static final String TAG = "MeetingCreateActivity";
+    private TextView fecha, username;
+    private  DatePickerDialog.OnDateSetListener DateSetListener;
+    private RadioGroup horario;
+    private Spinner motivo;
+    private EditText nombre_institucion, num_personas;
+    private Button btnReserva;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_meeting_create);
-        spinner = (Spinner) findViewById(R.id.spinnerVisita);
-        txtinstitucion = (EditText) findViewById(R.id.txtInstitucion);
+        username = (TextView) findViewById(R.id.mettxtUsername);
+        fecha = (TextView) findViewById(R.id.mettxtDatePicked);
+        horario = (RadioGroup) findViewById(R.id.radioHour);
+        motivo = (Spinner) findViewById(R.id.spinnerVisita);
+        nombre_institucion = (EditText) findViewById(R.id.txtInstitucion);
+        num_personas = (EditText) findViewById(R.id.txtPersonas);
+        btnReserva = (Button)findViewById(R.id.btnCrearReserva);
 
-        name = (TextView) findViewById(R.id.mettxtUsername);
-        dateMet = (TextView) findViewById(R.id.mettxtDatePicked);
+        if(!SharedPrefManager.getInstance(this).isLoggedIn()){
+            finish();
+            startActivity(new Intent(this,LogInActivity.class));
+        }
+
         User user = SharedPrefManager.getInstance(this).getUser();
-        name.setText(user.getUsername());
+        username.setText(user.getUsername());
         Intent incomingIntent = getIntent();
         String date = incomingIntent.getStringExtra("date");
-        dateMet.setText(date);
-
+        fecha.setText(date);
 
         findViewById(R.id.mettxtDatePicked).setOnClickListener(new View.OnClickListener() {
             @Override
@@ -73,27 +96,111 @@ public class MeetingCreateActivity extends AppCompatActivity  {
             public void onDateSet(DatePicker datePicker, int year, int month, int day) {
 
                 String date = day +"/"+(month+1)+"/"+year;
-                dateMet.setText(date);
+                fecha.setText(date);
             }
         };
-        spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+
+        motivo.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             public void onItemSelected(AdapterView<?> parent, View view, int pos, long id) {
                 Object item = parent.getItemAtPosition(pos);
                 if(item.equals("educativo")){
-                    txtinstitucion.setVisibility(View.VISIBLE);
+                    nombre_institucion.setVisibility(View.VISIBLE);
                 }
                 else{
-                    txtinstitucion.setVisibility(View.GONE);
+                    nombre_institucion.setVisibility(View.GONE);
                 }
             }
             public void onNothingSelected(AdapterView<?> parent) {
             }
         });
 
+        btnReserva.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                registerNewMeeting();
+            }
+        });
 
     }
 
-   
+    private void registerNewMeeting(){
+
+        //definir cada uno de las columnas del a ser llenadas
+
+        final String _username=username.getText().toString().trim();
+        final String _email = SharedPrefManager.getInstance(this).getUser().getEmail();
+        final String _fecha = fecha.getText().toString().trim();
+        final String _horario = ((RadioButton)findViewById(horario.getCheckedRadioButtonId())).getText().toString();
+        final String _motivo = String.valueOf((motivo.getSelectedItem()));
+        final String _nombre_institucion = nombre_institucion.getText().toString().trim();
+        final String _num_personas = num_personas.getText().toString().trim();
+
+        //definir condiciones en el ingreso de datos
+        if(TextUtils.isEmpty(_nombre_institucion)){
+            nombre_institucion.setError("Por favor ingrese el nombre de la institución");
+            nombre_institucion.requestFocus();
+        }
+        if(TextUtils.isEmpty(_num_personas)){
+            num_personas.setError("Por favor ingrese el número de personas");
+            num_personas.requestFocus();
+        }
+
+        StringRequest SR = new StringRequest(Request.Method.POST, URLs.URL_NEW_MEET, new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                try {
+                    JSONObject obj = new JSONObject(response);
+
+                    //en caso de una consulta exitosa
+                    if(!obj.getBoolean("error")){
+                        Toast.makeText(getApplicationContext(), obj.getString("message"), Toast.LENGTH_SHORT).show();
+                        JSONObject meetingJSON = obj.getJSONObject("reserva");
+                        Meeting meeting = new Meeting(
+                                meetingJSON.getInt("id_reserva"),
+                                meetingJSON.getString("username"),
+                                meetingJSON.getString("email"),
+                                meetingJSON.getString("fecha"),
+                                meetingJSON.getString("horario"),
+                                meetingJSON.getString("motivo"),
+                                meetingJSON.getString("nombre_institucion"),
+                                meetingJSON.getString("num_personas"));
+
+                        //guardar en el SharedPrefManager el meeting creado
+                        SharedPrefManager.getInstance(getApplicationContext()).meetingUser(meeting);
+
+                        finish();
+                        startActivity(new Intent(getApplicationContext(),MeetingListActivity.class));
+                    }
+                    else{
+                        Toast.makeText(getApplicationContext(),obj.getString("message"),Toast.LENGTH_SHORT).show();
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+
+            }
+        })
+        {
+            @Override
+            protected Map<String, String> getParams() throws AuthFailureError {
+                Map<String, String> params = new HashMap<>();
+                params.put("username",_username);
+                params.put("email",_email);
+                params.put("fecha",_fecha);
+                params.put("horario",_horario);
+                params.put("motivo",_motivo);
+                params.put("nombre_institucion",_nombre_institucion);
+                params.put("num_personas",_num_personas);
+                return params;
+            }
+        };
+
+        VolleySingleton.getInstance(this).addToRequestQueue(SR);
+    }
 
 
 

@@ -93,6 +93,63 @@
  }
  break; 
  
+ 
+ case 'newMeet':
+		if(isTheseParametersAvailable('username','email','fecha','horario','motivo','nombre_institucion', 'num_personas')){
+			$username = $_POST['username'];
+			$email = $_POST['email'];
+			$fecha = $_POST['fecha'];
+			$horario = $_POST['horario'];
+			$motivo = $_POST['motivo'];
+			$nombre_institucion = $_POST['nombre_institucion'];
+			$num_personas = $_POST['num_personas'];
+			
+			$stmt = $conn->prepare
+			("SELECT id_reserva FROM reserva WHERE username = ?");
+			
+			$stmt->bind_param("s",$username);
+			$stmt->execute();
+			$stmt->store_result();
+			
+			if($stmt->num_rows > 0){
+				$response['error']=true;
+				$response['message']='reserva ya registrada';
+				$stmt->close();
+			}else{
+				$stmt = $conn->prepare
+			("INSERT INTO reserva(username, email, fecha, horario, motivo, nombre_institucion, num_personas) VALUES (?, ?, ?, ?, ?, ?, ?)"); 
+				$stmt->bind_param("sssssss",$username, $email, $fecha, $horario, $motivo, $nombre_institucion, $num_personas);
+				if($stmt->execute()){
+					$stmt = $conn->prepare("SELECT id_reserva, id_reserva, username, email, fecha, horario, motivo, nombre_institucion, num_personas 
+					FROM reserva WHERE username = ?");
+					$stmt->bind_param("s",$username);
+					$stmt->execute();
+					$stmt->bind_result($id_reserva, $id, $username, $email, $fecha, $horario, $motivo, $nombre_institucion, $num_personas);
+					$stmt->fetch();
+					
+					$meet = array(
+						'id'=>$id,
+						'username'=>$username,
+						'email'=>$email,
+						'fecha'=>$fecha,
+						'horario'=>$horario,
+						'motivo'=>$motivo,
+						'nombre_institucion'=>$nombre_institucion,
+						'num_personas'=>$num_personas
+					);
+					
+					$stmt->close();
+					$response['error']=false;
+					$response['message']='su reserva se realizó con éxito';
+				}
+			}	
+		}else{
+			$response['error'] = true;
+			$response['message'] = 'los argumentos no estan disponibles';
+		}
+		break;
+ 
+ 
  default: 
  $response['error'] = true; 
  $response['message'] = 'Invalid Operation Called';
