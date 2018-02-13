@@ -9,4 +9,5 @@ public class URLs {
 
     static final String URL_REGISTER = ROOT_URL+"signup";
     static final String URL_LOGIN=ROOT_URL+"login";
+    static final String URL_NEW_MEET= ROOT_URL+"newMeet";
 }
