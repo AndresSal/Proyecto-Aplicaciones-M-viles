@@ -34,11 +34,11 @@ import java.util.Map;
 public class MeetingCreateActivity extends AppCompatActivity  {
 
     private static final String TAG = "MeetingCreateActivity";
-    private TextView meetingDate, username;
+    private TextView fecha, username;
     private  DatePickerDialog.OnDateSetListener DateSetListener;
-    private RadioGroup hourgroup;
-    private Spinner visitSpinner, gaugingSpinner;
-    private EditText txtInstitucion, txtNumPersonas;
+    private RadioGroup horario;
+    private Spinner motivo;
+    private EditText nombre_institucion, num_personas;
     private Button btnReserva;
 
     @Override
@@ -46,11 +46,11 @@ public class MeetingCreateActivity extends AppCompatActivity  {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_meeting_create);
         username = (TextView) findViewById(R.id.mettxtUsername);
-        meetingDate = (TextView) findViewById(R.id.mettxtDatePicked);
-        hourgroup = (RadioGroup) findViewById(R.id.radioHour);
-        visitSpinner = (Spinner) findViewById(R.id.spinnerVisita);
-        txtInstitucion = (EditText) findViewById(R.id.txtInstitucion);
-        txtNumPersonas = (EditText) findViewById(R.id.txtPersonas);
+        fecha = (TextView) findViewById(R.id.mettxtDatePicked);
+        horario = (RadioGroup) findViewById(R.id.radioHour);
+        motivo = (Spinner) findViewById(R.id.spinnerVisita);
+        nombre_institucion = (EditText) findViewById(R.id.txtInstitucion);
+        num_personas = (EditText) findViewById(R.id.txtPersonas);
         btnReserva = (Button)findViewById(R.id.btnCrearReserva);
 
         if(!SharedPrefManager.getInstance(this).isLoggedIn()){
@@ -62,7 +62,7 @@ public class MeetingCreateActivity extends AppCompatActivity  {
         username.setText(user.getUsername());
         Intent incomingIntent = getIntent();
         String date = incomingIntent.getStringExtra("date");
-        meetingDate.setText(date);
+        fecha.setText(date);
 
 
         findViewById(R.id.mettxtDatePicked).setOnClickListener(new View.OnClickListener() {
@@ -90,17 +90,17 @@ public class MeetingCreateActivity extends AppCompatActivity  {
             public void onDateSet(DatePicker datePicker, int year, int month, int day) {
 
                 String date = day +"/"+(month+1)+"/"+year;
-                meetingDate.setText(date);
+                fecha.setText(date);
             }
         };
-        visitSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+        motivo.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             public void onItemSelected(AdapterView<?> parent, View view, int pos, long id) {
                 Object item = parent.getItemAtPosition(pos);
                 if(item.equals("educativo")){
-                    txtInstitucion.setVisibility(View.VISIBLE);
+                    nombre_institucion.setVisibility(View.VISIBLE);
                 }
                 else{
-                    txtInstitucion.setVisibility(View.GONE);
+                    nombre_institucion.setVisibility(View.GONE);
                 }
             }
             public void onNothingSelected(AdapterView<?> parent) {
@@ -122,20 +122,20 @@ public class MeetingCreateActivity extends AppCompatActivity  {
 
         final String _username=username.getText().toString().trim();
         final String _email = SharedPrefManager.getInstance(this).getUser().getEmail();
-        final String _fecha = meetingDate.getText().toString().trim();
-        final String _horario = ((RadioButton)findViewById(hourgroup.getCheckedRadioButtonId())).getText().toString();
-        final String _motivo = String.valueOf((visitSpinner.getSelectedItem()));
-        final String _nombre_institucion = txtInstitucion.getText().toString().trim();
-        final String _num_personas = txtNumPersonas.getText().toString().trim();
+        final String _fecha = fecha.getText().toString().trim();
+        final String _horario = ((RadioButton)findViewById(horario.getCheckedRadioButtonId())).getText().toString();
+        final String _motivo = String.valueOf((motivo.getSelectedItem()));
+        final String _nombre_institucion = nombre_institucion.getText().toString().trim();
+        final String _num_personas = num_personas.getText().toString().trim();
 
         //definir condiciones en el ingreso de datos
         if(TextUtils.isEmpty(_nombre_institucion)){
-            txtInstitucion.setError("Por favor ingrese el nombre de la institución");
-            txtInstitucion.requestFocus();
+            nombre_institucion.setError("Por favor ingrese el nombre de la institución");
+            nombre_institucion.requestFocus();
         }
         if(TextUtils.isEmpty(_num_personas)){
-            txtNumPersonas.setError("Por favor ingrese el número de personas");
-            txtNumPersonas.requestFocus();
+            num_personas.setError("Por favor ingrese el número de personas");
+            num_personas.requestFocus();
         }
 
         StringRequest SR = new StringRequest(Request.Method.POST, URLs.URL_NEW_MEET, new Response.Listener<String>() {
@@ -193,7 +193,5 @@ public class MeetingCreateActivity extends AppCompatActivity  {
         };
 
         VolleySingleton.getInstance(this).addToRequestQueue(SR);
-
-
     }
 }
