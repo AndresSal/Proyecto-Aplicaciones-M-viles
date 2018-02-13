@@ -34,8 +34,6 @@ public class MeetingListActivity extends AppCompatActivity {
 
             @Override
             public void onSelectedDayChange(CalendarView view, int year, int month, int dayOfMonth) {
-                // display the selected date by using a toast
-                //Toast.makeText(getApplicationContext(), dayOfMonth + "/" + month + "/" + year, Toast.LENGTH_LONG).show();
                 String date = dayOfMonth+"/"+(month+1)+"/"+year;
                 Intent intent = new Intent(MeetingListActivity.this,MeetingCreateActivity.class);
                 intent.putExtra("date",date);
