@@ -53,6 +53,11 @@ public class MeetingCreateActivity extends AppCompatActivity  {
         txtNumPersonas = (EditText) findViewById(R.id.txtPersonas);
         btnReserva = (Button)findViewById(R.id.btnCrearReserva);
 
+        if(!SharedPrefManager.getInstance(this).isLoggedIn()){
+            finish();
+            startActivity(new Intent(this,LogInActivity.class));
+        }
+
         User user = SharedPrefManager.getInstance(this).getUser();
         username.setText(user.getUsername());
         Intent incomingIntent = getIntent();
@@ -114,22 +119,24 @@ public class MeetingCreateActivity extends AppCompatActivity  {
     private void registerNewMeeting(){
 
         //definir cada uno de las columnas del a ser llenadas
-        User usuario = SharedPrefManager.getInstance(getApplicationContext()).getUser();
-        final int user_id = usuario.getId();
-        final String meeting_date = meetingDate.getText().toString().trim();
-        final String hour = ((RadioButton)findViewById(hourgroup.getCheckedRadioButtonId())).getText().toString();
-        final String cause = String.valueOf((visitSpinner.getSelectedItem()));
-        final int num_people = Integer.parseInt(txtNumPersonas.getText().toString().trim());
-        final String institution = txtInstitucion.getText().toString().trim();
+
+        final String _username=username.getText().toString().trim();
+        final String _email = SharedPrefManager.getInstance(this).getUser().getEmail();
+        final String _fecha = meetingDate.getText().toString().trim();
+        final String _horario = ((RadioButton)findViewById(hourgroup.getCheckedRadioButtonId())).getText().toString();
+        final String _motivo = String.valueOf((visitSpinner.getSelectedItem()));
+        final String _nombre_institucion = txtInstitucion.getText().toString().trim();
+        final String _num_personas = txtNumPersonas.getText().toString().trim();
 
         //definir condiciones en el ingreso de datos
-        if(num_people==0){
+        if(TextUtils.isEmpty(_nombre_institucion)){
+            txtInstitucion.setError("Por favor ingrese el nombre de la institución");
+            txtInstitucion.requestFocus();
+        }
+        if(TextUtils.isEmpty(_num_personas)){
             txtNumPersonas.setError("Por favor ingrese el número de personas");
             txtNumPersonas.requestFocus();
         }
-        /*if(TextUtils.isEmpty(institution)){
-            institution = "NULL";
-        }*/
 
         StringRequest SR = new StringRequest(Request.Method.POST, URLs.URL_NEW_MEET, new Response.Listener<String>() {
             @Override
@@ -142,13 +149,16 @@ public class MeetingCreateActivity extends AppCompatActivity  {
                         Toast.makeText(getApplicationContext(), obj.getString("message"), Toast.LENGTH_SHORT).show();
                         JSONObject meetingJSON = obj.getJSONObject("reserva");
                         Meeting meeting = new Meeting(
-                                meetingJSON.getInt("id"),
-                                meetingJSON.getInt("id_meeting"),
-                                meetingJSON.getInt("num_personas"),
+                                meetingJSON.getInt("id_reserva"),
+                                meetingJSON.getString("username"),
+                                meetingJSON.getString("email"),
                                 meetingJSON.getString("fecha"),
                                 meetingJSON.getString("horario"),
                                 meetingJSON.getString("motivo"),
-                                meetingJSON.getString("nombre_ins"));
+                                meetingJSON.getString("nombre_institucion"),
+                                meetingJSON.getString("num_personas"));
+
+                        //guardar en el SharedPrefManager el meeting creado
                         SharedPrefManager.getInstance(getApplicationContext()).meetingUser(meeting);
 
                         finish();
@@ -171,12 +181,13 @@ public class MeetingCreateActivity extends AppCompatActivity  {
             @Override
             protected Map<String, String> getParams() throws AuthFailureError {
                 Map<String, String> params = new HashMap<>();
-                params.put("userId",String.valueOf(user_id));
-                params.put("meetingDate",meeting_date);
-                params.put("hour",hour);
-                params.put("cause",cause);
-                params.put("institution",institution);
-                params.put("numPeople",String.valueOf(num_people));
+                params.put("username",_username);
+                params.put("email",_email);
+                params.put("fecha",_fecha);
+                params.put("horario",_horario);
+                params.put("motivo",_motivo);
+                params.put("nombre_institucion",_nombre_institucion);
+                params.put("num_personas",_num_personas);
                 return params;
             }
         };

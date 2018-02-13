@@ -6,41 +6,42 @@ package com.example.user.museoepn;
 
 public class Meeting {
 
-    private int id_user, id_meeting, num_personas;
-    private String fecha, horario, motivo, nombre_institucion;
+    private int id_reserva;
+    private String username, email, fecha, horario, motivo, nombre_institucion, num_personas;
 
-    public Meeting(int iduser, int idmeeting, int numpersonas, String fecha, String horario, String motivo, String nombreinstitucion) {
-        this.id_user=iduser;
-        this.id_meeting=idmeeting;
-        this.num_personas=numpersonas;
+    public Meeting(int id_reserva, String username, String email, String fecha, String horario, String motivo, String nombre_institucion, String num_personas) {
+        this.id_reserva =id_reserva;
+        this.username=username;
+        this.email=email;
         this.fecha=fecha;
         this.horario=horario;
         this.motivo=motivo;
-        this.nombre_institucion=nombreinstitucion;
+        this.nombre_institucion=nombre_institucion;
+        this.num_personas=num_personas;
     }
 
-    public int getId_user() {
-        return id_user;
+    public int getId_reserva() {
+        return id_reserva;
     }
 
-    public void setId_user(int id_user) {
-        this.id_user = id_user;
+    public void setId_reserva(int id_reserva) {
+        this.id_reserva = id_reserva;
     }
 
-    public int getId_meeting() {
-        return id_meeting;
+    public String getUsername() {
+        return username;
     }
 
-    public void setId_meeting(int id_meeting) {
-        this.id_meeting = id_meeting;
+    public void setUsername(String username) {
+        this.username = username;
     }
 
-    public int getNum_personas() {
-        return num_personas;
+    public String getEmail() {
+        return email;
     }
 
-    public void setNum_personas(int num_personas) {
-        this.num_personas = num_personas;
+    public void setEmail(String email) {
+        this.email = email;
     }
 
     public String getFecha() {
@@ -73,5 +74,13 @@ public class Meeting {
 
     public void setNombre_institucion(String nombre_institucion) {
         this.nombre_institucion = nombre_institucion;
+    }
+
+    public String getNum_personas() {
+        return num_personas;
+    }
+
+    public void setNum_personas(String num_personas) {
+        this.num_personas = num_personas;
     }
 }
