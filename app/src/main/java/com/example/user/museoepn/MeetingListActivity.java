@@ -5,7 +5,6 @@ import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
@@ -14,13 +13,11 @@ import android.widget.CalendarView;
 import android.widget.ListView;
 import android.widget.Toast;
 
-import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
-import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 
 import org.json.JSONArray;
@@ -63,7 +60,9 @@ public class MeetingListActivity extends AppCompatActivity {
                // AvailableHours = getHours(date);
                 Intent intent = new Intent(MeetingListActivity.this,MeetingCreateActivity.class);
                 intent.putExtra("date",date);
-                intent.putExtra("listahoras", AvailableHours);
+
+                intent.putExtra("listahoras", Horarios(date));
+
                 startActivity(intent);
             }
         });
@@ -137,6 +136,8 @@ public class MeetingListActivity extends AppCompatActivity {
     }*/
 
     public void getReservas(){
+        User user = SharedPrefManager.getInstance(this).getUser();
+        final String username = user.getUsername();
         listaId = new ArrayList<>();
         lstView = (ListView) findViewById(R.id.listaReservas);
         adapter = new ArrayAdapter<String>(this,
@@ -144,10 +145,10 @@ public class MeetingListActivity extends AppCompatActivity {
         lstView.setAdapter(adapter);
         RequestQueue queue = Volley.newRequestQueue(this);
         //String url2 ="https://api.androidhive.info/contacts/";
-        String url2 ="http://192.168.100.38:85/Museo/reservas.php";
+        String url2 ="http://192.168.43.73:85/Museo/reserva2.php";
 
         final JsonObjectRequest jsObjRequest = new JsonObjectRequest
-                (Request.Method.GET, url2, null, new
+                (Request.Method.POST, url2, null, new
                         Response.Listener<JSONObject>() {
                             @Override
                             public void onResponse(JSONObject response) {
@@ -157,23 +158,34 @@ public class MeetingListActivity extends AppCompatActivity {
                                     JSONArray reservas = jsonObj.getJSONArray("reserva");
                                     for (int i = 0; i < reservas.length(); i++) {
                                         JSONObject c = reservas.getJSONObject(i);
-                                        String id = c.getString("id_reserva");
-                                        Log.d(" el id ",id);
+                                        String fecha = c.getString("fecha");
+
                                         String horario = c.getString("horario");
 
-                                        adapter.add(horario);
-                                        listaId.add(id);
+                                        adapter.add(""+fecha+"-"+horario);
+                                        //listaId.add(id);
                                     }
                                 }
                                 catch (final JSONException e) {
+
+                                    e.printStackTrace();
                                 }
                             }
-                        }, new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        // mTextView.setText("That didn't work!");
-                    }
-                });
+                        },
+                        new Response.ErrorListener() {
+                            @Override
+                            public void onErrorResponse(VolleyError error) {
+
+                                Toast.makeText(MeetingListActivity.this,error.toString(),Toast.LENGTH_LONG).show();
+                            }
+                        }){
+            @Override
+            protected Map<String,String> getParams(){
+                Map<String,String> params = new HashMap<String, String>();
+                params.put("id","jose");
+                return params;
+            }
+        };
         queue.add(jsObjRequest);
         adapter.notifyDataSetChanged();
         lstView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -188,4 +200,75 @@ public class MeetingListActivity extends AppCompatActivity {
             }
         });
     }
+
+
+    public ArrayList<String> Horarios(final String fecha){
+
+        final ArrayList<String> horarios = new ArrayList<String>();
+
+        RequestQueue queue = Volley.newRequestQueue(this);
+        //String url2 ="https://api.androidhive.info/contacts/";
+        String url2 ="http://192.168.43.73:85/Museo/fecha.php";
+
+        final JsonObjectRequest jsObjRequest = new JsonObjectRequest
+                (Request.Method.POST, url2, null, new
+                        Response.Listener<JSONObject>() {
+                            @Override
+                            public void onResponse(JSONObject response) {
+                                try {
+                                    JSONObject jsonObj = new
+                                            JSONObject(response.toString());
+                                    JSONArray reservas = jsonObj.getJSONArray("reserva");
+                                    for (int i = 0; i < reservas.length(); i++) {
+                                        JSONObject c = reservas.getJSONObject(i);
+                                        //String fecha = c.getString("fecha");
+
+                                        String horario = c.getString("horario");
+
+                                        horarios.add(horario);
+
+
+                                        Toast.makeText(MeetingListActivity.this,horario,Toast.LENGTH_LONG).show();
+                                        //listaId.add(id);
+                                    }
+                                }
+                                catch (final JSONException e) {
+
+                                    e.printStackTrace();
+                                }
+                            }
+                        },
+                        new Response.ErrorListener() {
+                            @Override
+                            public void onErrorResponse(VolleyError error) {
+
+                                Toast.makeText(MeetingListActivity.this,error.toString(),Toast.LENGTH_LONG).show();
+                            }
+                        }){
+            @Override
+            protected Map<String,String> getParams(){
+                Map<String,String> params = new HashMap<String, String>();
+                params.put("id",fecha);
+                return params;
+            }
+        };
+        queue.add(jsObjRequest);
+        adapter.notifyDataSetChanged();
+        lstView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+
+                String id =listaId.get(i);
+                Intent intent = new Intent(MeetingListActivity.this,InfoMeetingActivity.class);
+                intent.putExtra("id",id);
+                startActivity(intent);
+
+            }
+        });
+
+
+        return horarios;
+    }
+
+
 }

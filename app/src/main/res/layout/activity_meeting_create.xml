@@ -70,22 +70,14 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="center_horizontal">
-                <RadioGroup
-                    android:id="@+id/radioHour"
+
+
+                <Spinner
+                    android:id="@+id/horarios"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginBottom="8dp"
-                    android:layout_marginTop="8dp"
-                    android:padding="5dp"
-                    android:orientation="horizontal">
+                    android:layout_weight="1" />
 
-                    <Spinner
-                        android:id="@+id/horarios"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1" />
-
-                </RadioGroup>
             </TableRow>
             <TableRow
                 android:layout_height="wrap_content"

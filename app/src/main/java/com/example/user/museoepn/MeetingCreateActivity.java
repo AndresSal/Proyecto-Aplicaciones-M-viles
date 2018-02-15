@@ -12,6 +12,7 @@ import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CalendarView;
 import android.widget.DatePicker;
@@ -32,6 +33,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.w3c.dom.Text;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
@@ -47,21 +49,30 @@ public class MeetingCreateActivity extends AppCompatActivity  {
     private Spinner horarioSpinner;
     private EditText nombre_institucion, num_personas;
     private Button btnReserva;
-
+    private ArrayList<String> horas;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_meeting_create);
+
         username = (TextView) findViewById(R.id.mettxtUsername);
         fecha = (TextView) findViewById(R.id.mettxtDatePicked);
-        horario = (RadioGroup) findViewById(R.id.radioHour);
+
         motivo = (Spinner) findViewById(R.id.spinnerVisita);
         horarioSpinner = (Spinner) findViewById(R.id.horarios);
 
         nombre_institucion = (EditText) findViewById(R.id.txtInstitucion);
         num_personas = (EditText) findViewById(R.id.txtPersonas);
         btnReserva = (Button)findViewById(R.id.btnCrearReserva);
+        horas = new ArrayList<>();
+        Intent incomingIntent = getIntent();
+
+        horas=incomingIntent.getStringArrayListExtra("listahoras");
+
+        //Toast.makeText(MeetingCreateActivity.this,horas.get(0),Toast.LENGTH_LONG).show();
+
+        populate(horarioSpinner,horas);
 
         if(!SharedPrefManager.getInstance(this).isLoggedIn()){
             finish();
@@ -70,7 +81,6 @@ public class MeetingCreateActivity extends AppCompatActivity  {
 
         User user = SharedPrefManager.getInstance(this).getUser();
         username.setText(user.getUsername());
-        Intent incomingIntent = getIntent();
         String date = incomingIntent.getStringExtra("date");
         fecha.setText(date);
 
@@ -116,6 +126,19 @@ public class MeetingCreateActivity extends AppCompatActivity  {
             public void onNothingSelected(AdapterView<?> parent) {
             }
         });
+        horarioSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            public void onItemSelected(AdapterView<?> parent, View view, int pos, long id) {
+                Object item = parent.getItemAtPosition(pos);
+                if(item.equals("educativo")){
+                    nombre_institucion.setVisibility(View.VISIBLE);
+                }
+                else{
+                    nombre_institucion.setVisibility(View.GONE);
+                }
+            }
+            public void onNothingSelected(AdapterView<?> parent) {
+            }
+        });
 
         btnReserva.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -127,6 +150,8 @@ public class MeetingCreateActivity extends AppCompatActivity  {
     }
 
     private void registerNewMeeting(){
+
+
 
         //definir cada uno de las columnas del a ser llenadas
 
@@ -175,7 +200,7 @@ public class MeetingCreateActivity extends AppCompatActivity  {
                         startActivity(new Intent(getApplicationContext(),MeetingListActivity.class));
                     }
                     else{
-                        Toast.makeText(getApplicationContext(),obj.getString("message"),Toast.LENGTH_SHORT).show();
+                         Toast.makeText(getApplicationContext(),obj.getString("message"),Toast.LENGTH_SHORT).show();
                     }
                 } catch (JSONException e) {
                     e.printStackTrace();
@@ -205,7 +230,13 @@ public class MeetingCreateActivity extends AppCompatActivity  {
         VolleySingleton.getInstance(this).addToRequestQueue(SR);
     }
 
+    public void populate(Spinner mySpinner, ArrayList<String>lista){
 
+        ArrayAdapter<String>dataAdapter = new ArrayAdapter<String>(getApplicationContext(),android.R.layout.simple_spinner_item,lista);
+        dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        mySpinner.setAdapter(dataAdapter);
+
+    }
 
 
 
