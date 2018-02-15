@@ -48,91 +48,36 @@
                     android:textAppearance="@style/Base.TextAppearance.AppCompat.Medium"
                     />
             </TableRow>
-        </TableLayout>
-        <TableLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-
-            <TableRow
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:gravity="center_horizontal">
+            <TableRow>
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:padding="5dp"
                     android:text="Horario"
-                    android:gravity="center"
                     android:textAppearance="@style/Base.TextAppearance.AppCompat.Medium"/>
-            </TableRow>
-
-            <TableRow
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:gravity="center_horizontal">
-                <RadioGroup
-                    android:id="@+id/radioHour"
-                    android:layout_width="match_parent"
+                <Spinner
+                    android:id="@+id/spinnerHorarios"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginBottom="8dp"
-                    android:layout_marginTop="8dp"
-                    android:padding="5dp"
-                    android:orientation="horizontal">
+                    android:prompt="@string/motivo_prompt"
+                    android:padding="5dp"/>
 
-                    <RadioButton
-                        android:id="@+id/radioBtnH01"
-                        android:layout_width="wrap_content"
-                        android:layout_height="match_parent"
-                        android:checked="true"
-                        android:text="9h00"/>
-
-                    <RadioButton
-                        android:id="@+id/radioBtnH02"
-                        android:layout_width="wrap_content"
-                        android:layout_height="match_parent"
-                        android:text="10h00"/>
-                    <RadioButton
-                        android:id="@+id/radioBtnH03"
-                        android:layout_width="wrap_content"
-                        android:layout_height="match_parent"
-                        android:text="11h00"/>
-                    <RadioButton
-                        android:id="@+id/radioBtnH04"
-                        android:layout_width="wrap_content"
-                        android:layout_height="match_parent"
-                        android:text="12h00"/>
-                </RadioGroup>
             </TableRow>
-            <TableRow
-                android:layout_height="wrap_content"
-                android:layout_width="match_parent"
-                android:gravity="center_horizontal">
+            <TableRow>
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:padding="5dp"
                     android:text="Motivo de Visita"
-                    android:textAlignment="center"
                     android:textAppearance="@style/Base.TextAppearance.AppCompat.Medium"/>
-            </TableRow>
-            <TableRow
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center">
+
                 <Spinner
                     android:id="@+id/spinnerVisita"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:entries="@array/motivo_arrays"
                     android:prompt="@string/motivo_prompt"
-                    android:layout_marginLeft="50dp"
-                    android:layout_marginRight="38dp"
-                    android:layout_marginBottom="8dp"
-                    android:layout_marginTop="4dp"
-                    android:layout_gravity="center"
-                    android:textAlignment="center"
-                    android:padding="5dp"
-                    />
+                    android:padding="5dp"/>
             </TableRow>
         </TableLayout>
 

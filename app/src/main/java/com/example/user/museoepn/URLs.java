@@ -10,4 +10,6 @@ public class URLs {
     static final String URL_REGISTER = ROOT_URL+"signup";
     static final String URL_LOGIN=ROOT_URL+"login";
     static final String URL_NEW_MEET= ROOT_URL+"newMeet";
+    static final String URL_GET_HOURS= ROOT_URL+"http://192.168.1.4/Museo/prueba.php";
+
 }

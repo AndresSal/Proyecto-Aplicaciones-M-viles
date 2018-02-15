@@ -15,13 +15,19 @@ import java.util.ArrayList;
 
 public class MeetingListActivity extends AppCompatActivity {
 
-    private ListView lstView;
-    private ArrayList<String> listViewItems = new ArrayList<String>();
-    private ArrayAdapter<String> adapter;
+    public ListView lstView;
+    public ArrayList<String> listViewItems = new ArrayList<String>();
+    public ArrayAdapter<String> adapter;
     private BottomNavigationView bottomNavigationView;
+
+    public static boolean FLAG = false;
 
     CalendarView calendario;
 
+
+    public void setAdapter(String element) {
+        this.adapter.add(element);
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,16 +39,14 @@ public class MeetingListActivity extends AppCompatActivity {
 
 
             @Override
-            public void onSelectedDayChange(CalendarView view, int year, int month, int dayOfMonth) {
-                // display the selected date by using a toast
-                //Toast.makeText(getApplicationContext(), dayOfMonth + "/" + month + "/" + year, Toast.LENGTH_LONG).show();
+            public void onSelectedDayChange(CalendarView view, int year, int month, int dayOfMonth)
+            {
                 String date = dayOfMonth+"/"+(month+1)+"/"+year;
                 Intent intent = new Intent(MeetingListActivity.this,MeetingCreateActivity.class);
                 intent.putExtra("date",date);
                 startActivity(intent);
             }
         });
-
 
         lstView = (ListView)findViewById(R.id.listaReservas);
         adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1,listViewItems);
@@ -71,4 +75,5 @@ public class MeetingListActivity extends AppCompatActivity {
             }
         });
     }
+
 }
