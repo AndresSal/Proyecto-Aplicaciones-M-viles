@@ -120,6 +120,7 @@ public class RegisterActivity extends AppCompatActivity {
                         Toast.makeText(getApplicationContext(), obj.getString("message"), Toast.LENGTH_SHORT).show();
                     }
                 } catch (JSONException ex) {
+                    Toast.makeText(getApplicationContext(), String.valueOf(ex), Toast.LENGTH_SHORT).show();
                     ex.printStackTrace();
                 }
             }
