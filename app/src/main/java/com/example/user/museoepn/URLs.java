@@ -5,9 +5,10 @@ package com.example.user.museoepn;
  */
 
 public class URLs {
-    static final String ROOT_URL = "http://192.168.1.14/Museo/api.php?apicall=";
+    static final String ROOT_URL = "http://192.168.100.38:85/Museo/api.php?apicall=";
 
     static final String URL_REGISTER = ROOT_URL+"signup";
     static final String URL_LOGIN=ROOT_URL+"login";
     static final String URL_NEW_MEET= ROOT_URL+"newMeet";
+   // static final String URL_NEW_HORARIOS= ROOT_URL+"horarios";
 }

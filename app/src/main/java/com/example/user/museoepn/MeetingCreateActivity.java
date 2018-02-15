@@ -44,6 +44,7 @@ public class MeetingCreateActivity extends AppCompatActivity  {
     private  DatePickerDialog.OnDateSetListener DateSetListener;
     private RadioGroup horario;
     private Spinner motivo;
+    private Spinner horarioSpinner;
     private EditText nombre_institucion, num_personas;
     private Button btnReserva;
 
@@ -56,6 +57,8 @@ public class MeetingCreateActivity extends AppCompatActivity  {
         fecha = (TextView) findViewById(R.id.mettxtDatePicked);
         horario = (RadioGroup) findViewById(R.id.radioHour);
         motivo = (Spinner) findViewById(R.id.spinnerVisita);
+        horarioSpinner = (Spinner) findViewById(R.id.horarios);
+
         nombre_institucion = (EditText) findViewById(R.id.txtInstitucion);
         num_personas = (EditText) findViewById(R.id.txtPersonas);
         btnReserva = (Button)findViewById(R.id.btnCrearReserva);

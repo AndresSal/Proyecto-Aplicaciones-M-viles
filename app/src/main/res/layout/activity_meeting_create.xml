@@ -79,28 +79,12 @@
                     android:padding="5dp"
                     android:orientation="horizontal">
 
-                    <RadioButton
-                        android:id="@+id/radioBtnH01"
-                        android:layout_width="wrap_content"
-                        android:layout_height="match_parent"
-                        android:checked="true"
-                        android:text="9h00"/>
+                    <Spinner
+                        android:id="@+id/horarios"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1" />
 
-                    <RadioButton
-                        android:id="@+id/radioBtnH02"
-                        android:layout_width="wrap_content"
-                        android:layout_height="match_parent"
-                        android:text="10h00"/>
-                    <RadioButton
-                        android:id="@+id/radioBtnH03"
-                        android:layout_width="wrap_content"
-                        android:layout_height="match_parent"
-                        android:text="11h00"/>
-                    <RadioButton
-                        android:id="@+id/radioBtnH04"
-                        android:layout_width="wrap_content"
-                        android:layout_height="match_parent"
-                        android:text="12h00"/>
                 </RadioGroup>
             </TableRow>
             <TableRow
@@ -133,6 +117,10 @@
                     android:textAlignment="center"
                     android:padding="5dp"
                     />
+
+
+
+
             </TableRow>
         </TableLayout>
 
@@ -159,7 +147,6 @@
             android:layout_marginBottom="10dp"
             android:layout_marginTop="50dp"
             android:text="Crear Reserva"/>
-
 
 
     </LinearLayout>
