@@ -11,6 +11,7 @@
     <string name="inicio">inicio</string>
     <string name="reserva">reserva</string>
     <string name="salir">salir</string>
+    <string name="s">9:00</string>
     <string-array name="motivo_arrays">
         <item>educativo</item>
         <item>entretenimiento</item>

@@ -106,7 +106,7 @@ public class MeetingListActivity extends AppCompatActivity {
         //final ArrayList<String> horarios = new ArrayList<String>();
 
         RequestQueue queue = Volley.newRequestQueue(this);
-        String url3 ="http://192.168.100.38:85/Museo/fecha.php";
+        String url3 ="http://192.168.1.116/fecha.php";
         StringRequest stringRequest = new StringRequest(Request.Method.POST, url3,
                 new Response.Listener<String>() {
                     @Override
@@ -162,7 +162,7 @@ public class MeetingListActivity extends AppCompatActivity {
         //Intent incomingIntent = getIntent();
         //final String id = incomingIntent.getStringExtra("id");
         RequestQueue queue = Volley.newRequestQueue(this);
-        String url3 ="http://192.168.100.38:85/Museo/reserva2.php";
+        String url3 ="http://192.168.1.116/reserva2.php";
         StringRequest stringRequest = new StringRequest(Request.Method.POST, url3,
                 new Response.Listener<String>() {
                     @Override

@@ -133,10 +133,12 @@ public class MeetingCreateActivity extends AppCompatActivity  {
 
         hora = llenarHorarios();
 
-        Horarios(date);
+        horaUsuario=Horarios(date,horaUsuario);
+        ArrayList<String> s = new ArrayList<String>();
+        s.add("09h00");
 
-        compararHoras(hora,horaUsuario);
-        populate(horarioSpinner, hora);
+
+        populate(horarioSpinner, compararHoras(hora,s));
 
 
     }
@@ -150,7 +152,7 @@ public class MeetingCreateActivity extends AppCompatActivity  {
         final String _username=username.getText().toString().trim();
         final String _email = SharedPrefManager.getInstance(this).getUser().getEmail();
         final String _fecha = fecha.getText().toString().trim();
-        //final String _horario = ((RadioButton)findViewById(horario.getCheckedRadioButtonId())).getText().toString();
+        final String _horario = horarioSpinner.getSelectedItem().toString();
         final String _motivo = String.valueOf((motivo.getSelectedItem()));
         final String _nombre_institucion = nombre_institucion.getText().toString().trim();
         final String _num_personas = num_personas.getText().toString().trim();
@@ -211,7 +213,7 @@ public class MeetingCreateActivity extends AppCompatActivity  {
                 params.put("username",_username);
                 params.put("email",_email);
                 params.put("fecha",_fecha);
-               // params.put("horario",_horario);
+                params.put("horario",_horario);
                 params.put("motivo",_motivo);
                 params.put("nombre_institucion",_nombre_institucion);
                 params.put("num_personas",_num_personas);
@@ -254,24 +256,27 @@ public class MeetingCreateActivity extends AppCompatActivity  {
         return  temp;
     }
 
-    public void compararHoras(ArrayList<String> horas,ArrayList<String> horausuario)
+    public ArrayList<String> compararHoras(ArrayList<String> horas,ArrayList<String> horausuario)
     {
-
+    //ArrayList<String> aux = new ArrayList<String>();
+        Toast.makeText(MeetingCreateActivity.this,"Hola "+horausuario.get(0).toString(),Toast.LENGTH_LONG).show();
     for (int i = 0; i<horausuario.size();i++){
         if(horas.contains(horausuario.get(i)))
         {
+
           horas.remove(horausuario.get(i));
         }
     }
+    return horas;
     }
 
-    public void  Horarios(final String date){
+    public ArrayList<String>  Horarios(final String date, final ArrayList<String> horasL){
 
 
 
         //final ArrayList<String> temp = new ArrayList<>();
         RequestQueue queue = Volley.newRequestQueue(this);
-        String url3 ="http://192.168.100.38:85/Museo/fecha.php";
+        String url3 ="http://192.168.1.116/fecha.php";
         StringRequest stringRequest = new StringRequest(Request.Method.POST, url3,
                 new Response.Listener<String>() {
                     @Override
@@ -285,7 +290,7 @@ public class MeetingCreateActivity extends AppCompatActivity  {
 
                                 String horario = c.getString("horario");
 
-                                horaUsuario.add(horario);
+                                horasL.add(horario);
 
                             }
                             //Log.d("My App", obj.toString());
@@ -313,6 +318,7 @@ public class MeetingCreateActivity extends AppCompatActivity  {
 
         //return  temp;
 
+        return horasL;
 
     }
 
