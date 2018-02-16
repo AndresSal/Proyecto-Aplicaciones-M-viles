@@ -5,12 +5,14 @@ import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.CalendarView;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.android.volley.Request;
@@ -18,6 +20,7 @@ import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 
 import org.json.JSONArray;
@@ -36,11 +39,11 @@ public class MeetingListActivity extends AppCompatActivity {
     private ArrayList<String> listViewItems = new ArrayList<String>();
     private ArrayAdapter<String> adapter;
     private BottomNavigationView bottomNavigationView;
-
+    private User user = SharedPrefManager.getInstance(this).getUser();
+    private final String username = user.getUsername();
     ArrayList<String>AvailableHours;
 
     CalendarView calendario;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,19 +59,25 @@ public class MeetingListActivity extends AppCompatActivity {
             public void onSelectedDayChange(CalendarView view, int year, int month, int dayOfMonth) {
                 // display the selected date by using a toast
                 //Toast.makeText(getApplicationContext(), dayOfMonth + "/" + month + "/" + year, Toast.LENGTH_LONG).show();
-                String date = dayOfMonth+"/"+(month+1)+"/"+year;
-               // AvailableHours = getHours(date);
+                final String date = dayOfMonth+"/"+(month+1)+"/"+year;
+                /*if(!AvailableHours.isEmpty()){
+                    Toast.makeText(getApplicationContext(), dayOfMonth + "/" + month + "/" + year, Toast.LENGTH_LONG).show();
+                }
+                else {
+                    Toast.makeText(getApplicationContext(), ":C", Toast.LENGTH_LONG).show();
+                }*/
                 Intent intent = new Intent(MeetingListActivity.this,MeetingCreateActivity.class);
                 intent.putExtra("date",date);
 
-                intent.putExtra("listahoras", Horarios(date));
+                //intent.putExtra("listahoras", AvailableHours);
 
                 startActivity(intent);
             }
+
         });
 
-
-        getReservas();
+        showContact();
+        //Horarios(fecha);
         bottomNavigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
@@ -89,185 +98,119 @@ public class MeetingListActivity extends AppCompatActivity {
         });
     }
 
-    /*private ArrayList<String> getHours(String horario){
-        final ArrayList<String> ListaHours = new ArrayList<String>();
 
-        final String _horario = horario;
 
-        StringRequest SR = new StringRequest(Request.Method.POST, URLs.URL_NEW_HORARIOS, new Response.Listener<String>() {
-            @Override
-            public void onResponse(String response) {
-                try {
-                    JSONObject obj = new JSONObject(response);
 
-                    //en caso de una consulta exitosa
-                    if(!obj.getBoolean("error")){
-                        Toast.makeText(getApplicationContext(), obj.getString("message"), Toast.LENGTH_SHORT).show();
-                        JSONArray resultados = obj.getJSONArray("hours");
-                        for (int i = 0; i < resultados.length(); i++){
-                            JSONObject h = resultados.getJSONObject(i);
-                            ListaHours.add(h.getString("horario"));
+    public void Horarios(final String date){
+
+        //final ArrayList<String> horarios = new ArrayList<String>();
+
+        RequestQueue queue = Volley.newRequestQueue(this);
+        String url3 ="http://192.168.100.38:85/Museo/fecha.php";
+        StringRequest stringRequest = new StringRequest(Request.Method.POST, url3,
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        try {
+                            JSONObject obj = new JSONObject(response);
+                            JSONArray contacts =
+                                    obj.getJSONArray("reserva");
+                            for (int i = 0; i < contacts.length(); i++) {
+                                JSONObject c = contacts.getJSONObject(i);
+
+                                String horario = c.getString("horario");
+
+                                AvailableHours.add(horario);
+
+                            }
+                            //Log.d("My App", obj.toString());
+                            //System.out.println(obj.toString());
+                            //Toast.makeText(MeetingListActivity.this,"hola",Toast.LENGTH_LONG).show();
+                        } catch (Throwable t) {
                         }
                     }
-                    else{
-                        Toast.makeText(getApplicationContext(),obj.getString("message"),Toast.LENGTH_SHORT).show();
-                    }
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-            }
-        }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
 
-            }
-        })
-        {
+                        Toast.makeText(MeetingListActivity.this,error.toString(),Toast.LENGTH_LONG).show();
+                    }
+                }){
             @Override
-            protected Map<String, String> getParams() throws AuthFailureError {
-                Map<String, String> params = new HashMap<>();
-                params.put("horario",_horario);
+            protected Map<String,String> getParams(){
+                Map<String,String> params = new HashMap<String, String>();
+                params.put("id",date);
                 return params;
             }
         };
+        queue.add(stringRequest);
 
-        VolleySingleton.getInstance(this).addToRequestQueue(SR);
-        return ListaHours;
-    }*/
 
-    public void getReservas(){
-        User user = SharedPrefManager.getInstance(this).getUser();
-        final String username = user.getUsername();
+
+
+    }
+
+    public void showContact(){
+
         listaId = new ArrayList<>();
         lstView = (ListView) findViewById(R.id.listaReservas);
         adapter = new ArrayAdapter<String>(this,
                 android.R.layout.simple_list_item_1, listViewItems);
         lstView.setAdapter(adapter);
+
+        //Intent incomingIntent = getIntent();
+        //final String id = incomingIntent.getStringExtra("id");
         RequestQueue queue = Volley.newRequestQueue(this);
-        //String url2 ="https://api.androidhive.info/contacts/";
-        String url2 ="http://192.168.43.73:85/Museo/reserva2.php";
+        String url3 ="http://192.168.100.38:85/Museo/reserva2.php";
+        StringRequest stringRequest = new StringRequest(Request.Method.POST, url3,
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        try {
+                            JSONObject obj = new JSONObject(response);
+                            JSONArray contacts =
+                                    obj.getJSONArray("reserva");
+                            for (int i = 0; i < contacts.length(); i++) {
+                                JSONObject c = contacts.getJSONObject(i);
 
-        final JsonObjectRequest jsObjRequest = new JsonObjectRequest
-                (Request.Method.POST, url2, null, new
-                        Response.Listener<JSONObject>() {
-                            @Override
-                            public void onResponse(JSONObject response) {
-                                try {
-                                    JSONObject jsonObj = new
-                                            JSONObject(response.toString());
-                                    JSONArray reservas = jsonObj.getJSONArray("reserva");
-                                    for (int i = 0; i < reservas.length(); i++) {
-                                        JSONObject c = reservas.getJSONObject(i);
-                                        String fecha = c.getString("fecha");
-
-                                        String horario = c.getString("horario");
-
-                                        adapter.add(""+fecha+"-"+horario);
-                                        //listaId.add(id);
-                                    }
-                                }
-                                catch (final JSONException e) {
-
-                                    e.printStackTrace();
-                                }
+                                String horario = c.getString("horario");
+                                String fecha = c.getString("fecha");
+                                adapter.add(""+fecha+"-"+horario);
+                                //AvailableHours.add(horario);
                             }
-                        },
-                        new Response.ErrorListener() {
-                            @Override
-                            public void onErrorResponse(VolleyError error) {
+                            Log.d("My App", obj.toString());
+                        } catch (Throwable t) {
+                        }
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
 
-                                Toast.makeText(MeetingListActivity.this,error.toString(),Toast.LENGTH_LONG).show();
-                            }
-                        }){
+                        Toast.makeText(MeetingListActivity.this,error.toString(),Toast.LENGTH_LONG).show();
+                    }
+                }){
             @Override
             protected Map<String,String> getParams(){
                 Map<String,String> params = new HashMap<String, String>();
-                params.put("id","jose");
+                params.put("id",username);
                 return params;
             }
         };
-        queue.add(jsObjRequest);
+        queue.add(stringRequest);
         adapter.notifyDataSetChanged();
         lstView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
 
-                String id =listaId.get(i);
+                //String id =listaId.get(i);
                 Intent intent = new Intent(MeetingListActivity.this,InfoMeetingActivity.class);
-                intent.putExtra("id",id);
+                intent.putExtra("username",username);
                 startActivity(intent);
 
             }
         });
-    }
-
-
-    public ArrayList<String> Horarios(final String fecha){
-
-        final ArrayList<String> horarios = new ArrayList<String>();
-
-        RequestQueue queue = Volley.newRequestQueue(this);
-        //String url2 ="https://api.androidhive.info/contacts/";
-        String url2 ="http://192.168.43.73:85/Museo/fecha.php";
-
-        final JsonObjectRequest jsObjRequest = new JsonObjectRequest
-                (Request.Method.POST, url2, null, new
-                        Response.Listener<JSONObject>() {
-                            @Override
-                            public void onResponse(JSONObject response) {
-                                try {
-                                    JSONObject jsonObj = new
-                                            JSONObject(response.toString());
-                                    JSONArray reservas = jsonObj.getJSONArray("reserva");
-                                    for (int i = 0; i < reservas.length(); i++) {
-                                        JSONObject c = reservas.getJSONObject(i);
-                                        //String fecha = c.getString("fecha");
-
-                                        String horario = c.getString("horario");
-
-                                        horarios.add(horario);
-
-
-                                        Toast.makeText(MeetingListActivity.this,horario,Toast.LENGTH_LONG).show();
-                                        //listaId.add(id);
-                                    }
-                                }
-                                catch (final JSONException e) {
-
-                                    e.printStackTrace();
-                                }
-                            }
-                        },
-                        new Response.ErrorListener() {
-                            @Override
-                            public void onErrorResponse(VolleyError error) {
-
-                                Toast.makeText(MeetingListActivity.this,error.toString(),Toast.LENGTH_LONG).show();
-                            }
-                        }){
-            @Override
-            protected Map<String,String> getParams(){
-                Map<String,String> params = new HashMap<String, String>();
-                params.put("id",fecha);
-                return params;
-            }
-        };
-        queue.add(jsObjRequest);
-        adapter.notifyDataSetChanged();
-        lstView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-
-                String id =listaId.get(i);
-                Intent intent = new Intent(MeetingListActivity.this,InfoMeetingActivity.class);
-                intent.putExtra("id",id);
-                startActivity(intent);
-
-            }
-        });
-
-
-        return horarios;
     }
 
 

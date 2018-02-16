@@ -32,14 +32,15 @@ TextView txtUser,txtFecha,txtMeeting,txtInstitucion,txtPersonas;
 
     public void showContact(){
 
-         txtUser= (TextView) findViewById(R.id.txtvUsername);
-        txtFecha = (TextView) findViewById(R.id.txtvDatePicked);
+         txtUser= (TextView) findViewById(R.id.txtvNombre);
+        //txtFecha = (TextView) findViewById(R.id.);
+        txtFecha = (TextView) findViewById(R.id.txtvFecha);
         txtMeeting = (TextView) findViewById(R.id.txtvMeeting);
         txtInstitucion = (TextView) findViewById(R.id.txtvInstitucion);
         txtPersonas = (TextView) findViewById(R.id.txtvPersonas);
         Intent incomingIntent = getIntent();
-        final String id = incomingIntent.getStringExtra("id");
-        Toast.makeText(InfoMeetingActivity.this,id.toString(),Toast.LENGTH_LONG).show();
+        final String username = incomingIntent.getStringExtra("username");
+       // Toast.makeText(InfoMeetingActivity.this,username.toString(),Toast.LENGTH_LONG).show();
         RequestQueue queue = Volley.newRequestQueue(this);
         String url3 ="http://192.168.100.38:85/Museo/reserva2.php";
         StringRequest stringRequest = new StringRequest(Request.Method.POST, url3,
@@ -78,7 +79,7 @@ TextView txtUser,txtFecha,txtMeeting,txtInstitucion,txtPersonas;
             @Override
             protected Map<String,String> getParams(){
                 Map<String,String> params = new HashMap<String, String>();
-                params.put("id_reserva", id);
+                params.put("id", username);
                 return params;
             }
         };

@@ -1,12 +1,9 @@
 package com.example.user.museoepn;
 
-import android.annotation.SuppressLint;
 import android.app.DatePickerDialog;
-import android.app.Dialog;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
-import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.TextUtils;
@@ -14,28 +11,26 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.CalendarView;
 import android.widget.DatePicker;
 import android.widget.EditText;
-import android.widget.RadioButton;
-import android.widget.RadioGroup;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
+import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.w3c.dom.Text;
 
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -44,12 +39,13 @@ public class MeetingCreateActivity extends AppCompatActivity  {
     private static final String TAG = "MeetingCreateActivity";
     private TextView fecha, username;
     private  DatePickerDialog.OnDateSetListener DateSetListener;
-    private RadioGroup horario;
     private Spinner motivo;
     private Spinner horarioSpinner;
     private EditText nombre_institucion, num_personas;
     private Button btnReserva;
-    private ArrayList<String> horas;
+    private ArrayList<String> hora;
+    private ArrayList<String> horaUsuario;
+    private String date="";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -65,14 +61,13 @@ public class MeetingCreateActivity extends AppCompatActivity  {
         nombre_institucion = (EditText) findViewById(R.id.txtInstitucion);
         num_personas = (EditText) findViewById(R.id.txtPersonas);
         btnReserva = (Button)findViewById(R.id.btnCrearReserva);
-        horas = new ArrayList<>();
+        hora = new ArrayList<String>();
+        horaUsuario = new ArrayList<String>();
+
         Intent incomingIntent = getIntent();
+         date = incomingIntent.getStringExtra("date");
+        fecha.setText(date);
 
-        horas=incomingIntent.getStringArrayListExtra("listahoras");
-
-        //Toast.makeText(MeetingCreateActivity.this,horas.get(0),Toast.LENGTH_LONG).show();
-
-        populate(horarioSpinner,horas);
 
         if(!SharedPrefManager.getInstance(this).isLoggedIn()){
             finish();
@@ -81,8 +76,8 @@ public class MeetingCreateActivity extends AppCompatActivity  {
 
         User user = SharedPrefManager.getInstance(this).getUser();
         username.setText(user.getUsername());
-        String date = incomingIntent.getStringExtra("date");
-        fecha.setText(date);
+
+
 
         findViewById(R.id.mettxtDatePicked).setOnClickListener(new View.OnClickListener() {
             @Override
@@ -115,19 +110,7 @@ public class MeetingCreateActivity extends AppCompatActivity  {
 
         motivo.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             public void onItemSelected(AdapterView<?> parent, View view, int pos, long id) {
-                Object item = parent.getItemAtPosition(pos);
-                if(item.equals("educativo")){
-                    nombre_institucion.setVisibility(View.VISIBLE);
-                }
-                else{
-                    nombre_institucion.setVisibility(View.GONE);
-                }
-            }
-            public void onNothingSelected(AdapterView<?> parent) {
-            }
-        });
-        horarioSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            public void onItemSelected(AdapterView<?> parent, View view, int pos, long id) {
+                //Toast.makeText(MeetingCreateActivity.this,horaUsuario.get(0),Toast.LENGTH_LONG).show();
                 Object item = parent.getItemAtPosition(pos);
                 if(item.equals("educativo")){
                     nombre_institucion.setVisibility(View.VISIBLE);
@@ -140,12 +123,21 @@ public class MeetingCreateActivity extends AppCompatActivity  {
             }
         });
 
+
         btnReserva.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 registerNewMeeting();
             }
         });
+
+        hora = llenarHorarios();
+
+        Horarios(date);
+
+        compararHoras(hora,horaUsuario);
+        populate(horarioSpinner, hora);
+
 
     }
 
@@ -158,7 +150,7 @@ public class MeetingCreateActivity extends AppCompatActivity  {
         final String _username=username.getText().toString().trim();
         final String _email = SharedPrefManager.getInstance(this).getUser().getEmail();
         final String _fecha = fecha.getText().toString().trim();
-        final String _horario = ((RadioButton)findViewById(horario.getCheckedRadioButtonId())).getText().toString();
+        //final String _horario = ((RadioButton)findViewById(horario.getCheckedRadioButtonId())).getText().toString();
         final String _motivo = String.valueOf((motivo.getSelectedItem()));
         final String _nombre_institucion = nombre_institucion.getText().toString().trim();
         final String _num_personas = num_personas.getText().toString().trim();
@@ -219,7 +211,7 @@ public class MeetingCreateActivity extends AppCompatActivity  {
                 params.put("username",_username);
                 params.put("email",_email);
                 params.put("fecha",_fecha);
-                params.put("horario",_horario);
+               // params.put("horario",_horario);
                 params.put("motivo",_motivo);
                 params.put("nombre_institucion",_nombre_institucion);
                 params.put("num_personas",_num_personas);
@@ -238,7 +230,91 @@ public class MeetingCreateActivity extends AppCompatActivity  {
 
     }
 
+    public ArrayList<String> llenarHorarios(){
+        ArrayList<String> temp = new ArrayList<>();
+        temp.add("08h00");
+        temp.add("08h30");
+        temp.add("09h00");
+        temp.add("09h30");
+        temp.add("10h00");
+        temp.add("10h30");
+        temp.add("11h00");
+        temp.add("11h30");
+        temp.add("12h00");
+        temp.add("12h30");
+        temp.add("13h00");
+        temp.add("13h30");
+        temp.add("14h00");
+        temp.add("14h30");
+        temp.add("15h00");
+        temp.add("15h30");
+        temp.add("16h00");
+        temp.add("16h30");
 
+        return  temp;
+    }
+
+    public void compararHoras(ArrayList<String> horas,ArrayList<String> horausuario)
+    {
+
+    for (int i = 0; i<horausuario.size();i++){
+        if(horas.contains(horausuario.get(i)))
+        {
+          horas.remove(horausuario.get(i));
+        }
+    }
+    }
+
+    public void  Horarios(final String date){
+
+
+
+        //final ArrayList<String> temp = new ArrayList<>();
+        RequestQueue queue = Volley.newRequestQueue(this);
+        String url3 ="http://192.168.100.38:85/Museo/fecha.php";
+        StringRequest stringRequest = new StringRequest(Request.Method.POST, url3,
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        try {
+                            JSONObject obj = new JSONObject(response);
+                            JSONArray contacts =
+                                    obj.getJSONArray("reserva");
+                            for (int i = 0; i < contacts.length(); i++) {
+                                JSONObject c = contacts.getJSONObject(i);
+
+                                String horario = c.getString("horario");
+
+                                horaUsuario.add(horario);
+
+                            }
+                            //Log.d("My App", obj.toString());
+                            //System.out.println(obj.toString());
+                            Toast.makeText(MeetingCreateActivity.this,horaUsuario.get(0).toString(),Toast.LENGTH_LONG).show();
+                        } catch (Throwable t) {
+                        }
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+
+                        Toast.makeText(MeetingCreateActivity.this,error.toString(),Toast.LENGTH_LONG).show();
+                    }
+                }){
+            @Override
+            protected Map<String,String> getParams(){
+                Map<String,String> params = new HashMap<String, String>();
+                params.put("id",date);
+                return params;
+            }
+        };
+        queue.add(stringRequest);
+
+        //return  temp;
+
+
+    }
 
 
 }
