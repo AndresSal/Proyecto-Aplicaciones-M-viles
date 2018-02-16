@@ -5,7 +5,7 @@ package com.example.user.museoepn;
  */
 
 public class URLs {
-    static final String ROOT_URL = "http://192.168.1.116/api.php?apicall=";
+    static final String ROOT_URL = "http://192.168.43.65/api.php?apicall=";
 
     static final String URL_REGISTER = ROOT_URL+"signup";
     static final String URL_LOGIN=ROOT_URL+"login";

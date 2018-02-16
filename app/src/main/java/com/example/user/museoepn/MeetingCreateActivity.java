@@ -133,12 +133,12 @@ public class MeetingCreateActivity extends AppCompatActivity  {
 
         hora = llenarHorarios();
 
-        horaUsuario=Horarios(date,horaUsuario);
-        ArrayList<String> s = new ArrayList<String>();
-        s.add("09h00");
+        Intent i = getIntent();
+        horaUsuario.add(i.getStringExtra("horarios"));
 
 
-        populate(horarioSpinner, compararHoras(hora,s));
+
+        populate(horarioSpinner, compararHoras(hora,horaUsuario));
 
 
     }
@@ -256,10 +256,11 @@ public class MeetingCreateActivity extends AppCompatActivity  {
         return  temp;
     }
 
+
     public ArrayList<String> compararHoras(ArrayList<String> horas,ArrayList<String> horausuario)
     {
     //ArrayList<String> aux = new ArrayList<String>();
-        Toast.makeText(MeetingCreateActivity.this,"Hola "+horausuario.get(0).toString(),Toast.LENGTH_LONG).show();
+        //Toast.makeText(MeetingCreateActivity.this,"Hola "+horausuario.get(0).toString(),Toast.LENGTH_LONG).show();
     for (int i = 0; i<horausuario.size();i++){
         if(horas.contains(horausuario.get(i)))
         {
@@ -269,7 +270,7 @@ public class MeetingCreateActivity extends AppCompatActivity  {
     }
     return horas;
     }
-
+/*
     public ArrayList<String>  Horarios(final String date, final ArrayList<String> horasL){
 
 
@@ -320,7 +321,7 @@ public class MeetingCreateActivity extends AppCompatActivity  {
 
         return horasL;
 
-    }
+    }*/
 
 
 }

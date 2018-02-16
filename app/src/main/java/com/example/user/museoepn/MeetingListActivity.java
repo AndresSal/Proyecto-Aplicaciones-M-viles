@@ -47,6 +47,7 @@ public class MeetingListActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_meeting_list);
         AvailableHours = new ArrayList<String>();
@@ -66,12 +67,20 @@ public class MeetingListActivity extends AppCompatActivity {
                 else {
                     Toast.makeText(getApplicationContext(), ":C", Toast.LENGTH_LONG).show();
                 }*/
+
+
                 Intent intent = new Intent(MeetingListActivity.this,MeetingCreateActivity.class);
                 intent.putExtra("date",date);
 
-                //intent.putExtra("listahoras", AvailableHours);
+
 
                 startActivity(intent);
+
+                //startActivity(Horarios(date));
+               // startActivity(fecha);
+                //intent.putExtra("listahoras", AvailableHours);
+
+
             }
 
         });
@@ -96,17 +105,26 @@ public class MeetingListActivity extends AppCompatActivity {
                 return false;
             }
         });
+
+
+
+
     }
 
 
 
 
-    public void Horarios(final String date){
+    public ArrayList<String>  Horarios(final String date){
 
-        //final ArrayList<String> horarios = new ArrayList<String>();
 
+        Intent fecha= new Intent(MeetingListActivity.this,MeetingCreateActivity.class);
+
+        final ArrayList<String> horarios = new ArrayList<String>();
+
+
+        //final ArrayList<String> temp = new ArrayList<>();
         RequestQueue queue = Volley.newRequestQueue(this);
-        String url3 ="http://192.168.1.116/fecha.php";
+        String url3 ="http://192.168.43.65/fecha.php";
         StringRequest stringRequest = new StringRequest(Request.Method.POST, url3,
                 new Response.Listener<String>() {
                     @Override
@@ -120,12 +138,12 @@ public class MeetingListActivity extends AppCompatActivity {
 
                                 String horario = c.getString("horario");
 
-                                AvailableHours.add(horario);
+                                horarios.add(horario);
 
                             }
                             //Log.d("My App", obj.toString());
                             //System.out.println(obj.toString());
-                            //Toast.makeText(MeetingListActivity.this,"hola",Toast.LENGTH_LONG).show();
+                           Toast.makeText(MeetingListActivity.this, horarios.get(0),Toast.LENGTH_LONG).show();
                         } catch (Throwable t) {
                         }
                     }
@@ -146,8 +164,10 @@ public class MeetingListActivity extends AppCompatActivity {
         };
         queue.add(stringRequest);
 
+        //return  temp;
 
-
+        //fecha.putExtra("horarios", horarios[0]);
+        return horarios;
 
     }
 
@@ -162,7 +182,7 @@ public class MeetingListActivity extends AppCompatActivity {
         //Intent incomingIntent = getIntent();
         //final String id = incomingIntent.getStringExtra("id");
         RequestQueue queue = Volley.newRequestQueue(this);
-        String url3 ="http://192.168.1.116/reserva2.php";
+        String url3 ="http://192.168.43.65/reserva2.php";
         StringRequest stringRequest = new StringRequest(Request.Method.POST, url3,
                 new Response.Listener<String>() {
                     @Override
